@@ -33,10 +33,24 @@ module.exports = {
             const summonerResponse = await axios.get(`https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}?api_key=${api_key}`);
             const { profileIconId, summonerLevel, revisionDate } = summonerResponse.data;
 
-            // Construire l'URL de l'icône de profil
             const profileIconUrl = `http://ddragon.leagueoflegends.com/cdn/14.15.1/img/profileicon/${profileIconId}.png`;
 
-            // Télécharger et analyser l'image pour obtenir la couleur dominante
+
+            const masteryResponse = await axios.get(`https://euw1.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-puuid/${puuid}?api_key=${api_key}`);
+            const topMastery = masteryResponse.data[0];
+            const championId = topMastery.championId;
+
+            const championData = await axios.get('http://ddragon.leagueoflegends.com/cdn/14.15.1/data/en_US/champion.json');
+            const champions = championData.data.data;
+            let championName = 'Inconnu';
+
+            for (let champKey in champions) {
+                if (champions[champKey].key == championId) {
+                    championName = champions[champKey].name;
+                    break;
+                }
+            }
+
             const image = await Jimp.read(profileIconUrl);
             const color = image.clone().resize(1, 1).getPixelColor(0, 0); // Obtenir la couleur moyenne
             const hexColor = Jimp.intToRGBA(color); // Convertir en objet RGBA
@@ -50,10 +64,10 @@ module.exports = {
                 .setThumbnail(profileIconUrl)
                 .addFields(
                     { name: 'Niveau', value: `${summonerLevel}`, inline: false },
-                    { name: 'Dernière Connexion', value: `${revisionDateFormatted}`, inline: false } // Ajout du champ pour la date révisée
+                    { name: 'Champion avec la maîtrise la plus élevée', value: `${championName} (${topMastery.championPoints} points)`, inline: false },
+                    { name: 'Dernière Connexion', value: `${revisionDateFormatted}`, inline: false }
                 );
 
-            // Envoyer l'embed
             message.channel.send({ embeds: [resultEmbed] });
 
         } catch (error) {
