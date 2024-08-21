@@ -1,6 +1,6 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require('discord.js');
 const fs = require('fs');
-const path = './commands/league/customs/';
+const path = './commands/games/league/customs/';
 
 let team1 = [];
 let team2 = [];
@@ -49,23 +49,26 @@ module.exports = {
         const collector = sentMessage.createMessageComponentCollector({ filter, componentType: ComponentType.Button, time: 120000 });
 
         collector.on('collect', async i => {
+            const member = i.guild.members.cache.get(i.user.id);
+            const userName = member ? member.displayName : i.user.username;
+
             if (i.customId === 'team1') {
-                if (team1.includes(i.user.tag)) {
-                    team1 = team1.filter(member => member !== i.user.tag);
+                if (team1.includes(userName)) {
+                    team1 = team1.filter(member => member !== userName);
                 } else {
-                    if (team2.includes(i.user.tag)) {
-                        team2 = team2.filter(member => member !== i.user.tag);
+                    if (team2.includes(userName)) {
+                        team2 = team2.filter(member => member !== userName);
                     }
-                    team1.push(i.user.tag);
+                    team1.push(userName);
                 }
             } else if (i.customId === 'team2') {
-                if (team2.includes(i.user.tag)) {
-                    team2 = team2.filter(member => member !== i.user.tag);
+                if (team2.includes(userName)) {
+                    team2 = team2.filter(member => member !== userName);
                 } else {
-                    if (team1.includes(i.user.tag)) {
-                        team1 = team1.filter(member => member !== i.user.tag);
+                    if (team1.includes(userName)) {
+                        team1 = team1.filter(member => member !== userName);
                     }
-                    team2.push(i.user.tag);
+                    team2.push(userName);
                 }
             } else if (i.customId === 'confirm') {
                 const fileId = `${Date.now()}`;
@@ -117,7 +120,7 @@ module.exports = {
 };
 
 async function startRoleSelection(message, gameId) {
-    const filePath = `./commands/league/customs/${gameId}.json`;
+    const filePath = `./commands/games/league/customs/${gameId}.json`;
 
     if (!fs.existsSync(filePath)) {
         return message.channel.send('Erreur : Aucun fichier trouvé pour l\'ID fourni.');
@@ -189,7 +192,10 @@ async function startRoleSelection(message, gameId) {
     const collector = sentMessage.createMessageComponentCollector({ filter, componentType: ComponentType.Button });
 
     collector.on('collect', async i => {
-        if (!players.includes(i.user.tag)) {
+        const member = i.guild.members.cache.get(i.user.id);
+        const userName = member ? member.displayName : i.user.username;
+
+        if (!players.includes(userName)) {
             return i.reply({ content: 'Vous ne faites pas partie de cette custom.', ephemeral: true });
         }
 
@@ -197,20 +203,20 @@ async function startRoleSelection(message, gameId) {
 
         // Remove the user from any other lane
         for (const lane in lanes) {
-            lanes[lane] = lanes[lane].filter(member => member.tag !== i.user.tag);
+            lanes[lane] = lanes[lane].filter(member => member.username !== userName);
         }
 
         // Add the user to the selected lane
         lanes[role].push({
-            tag: i.user.tag,
-            team: team1.includes(i.user.tag) ? 'blue' : 'red'
+            username: userName,
+            team: team1.includes(userName) ? 'blue' : 'red'
         });
 
         const updatedFields = Object.keys(lanes).map(lane => ({
             name: `${lane.charAt(0).toUpperCase() + lane.slice(1)}`,
             value: lanes[lane].map(member => {
                 const emoji = member.team === 'red' ? laneEmojis_red[lane] : laneEmojis_blue[lane];
-                return `${emoji} ${member.tag}`;
+                return `${emoji} ${member.username}`;
             }).join('\n') || 'Aucun membre',
             inline: false
         }));

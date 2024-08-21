@@ -18,7 +18,7 @@ module.exports = {
         const team2ChannelId = '1270328314300596308';
 
         // Chercher le dernier fichier custom créé
-        const customsFolder = './commands/league/customs';
+        const customsFolder = './commands/games/league/customs/';
         const customFiles = fs.readdirSync(customsFolder)
             .map(fileName => ({
                 name: fileName,

@@ -45,20 +45,21 @@ module.exports = {
         const collector = sentMessage.createMessageComponentCollector({ filter, componentType: ComponentType.Button, time: 43200000 });
 
         collector.on('collect', async i => {
-            const userTag = i.user.tag;
+            const member = i.guild.members.cache.get(i.user.id);
+            const userName = member ? member.displayName : i.user.username;
 
             // Remove the user from all lists
-            present = present.filter(tag => tag !== userTag);
-            later = later.filter(tag => tag !== userTag);
-            missing = missing.filter(tag => tag !== userTag);
+            present = present.filter(tag => tag !== userName);
+            later = later.filter(tag => tag !== userName);
+            missing = missing.filter(tag => tag !== userName);
 
             // Add the user to the selected list
             if (i.customId === 'present') {
-                present.push(userTag);
+                present.push(userName);
             } else if (i.customId === 'later') {
-                later.push(userTag);
+                later.push(userName);
             } else if (i.customId === 'missing') {
-                missing.push(userTag);
+                missing.push(userName);
             }
 
             // Update the embed with counts
@@ -66,7 +67,7 @@ module.exports = {
                 .setColor('#ad9563')
                 .setTitle('Qui est chaud pour custom ?')
                 .addFields(
-                    { name: `Est présent : ${present.length || '0'}`, value: `${present.join(" ") || 'Personne'}` },
+                    { name: `Présent : ${present.length || '0'}`, value: `${present.join(" ") || 'Personne'}` },
                     { name: `Plus tard : ${later.length || '0'}`, value: `${later.join(" ") || 'Personne'}` },
                     { name: `Pas disponible : ${missing.length || '0'}`, value: `${missing.join(" ") || 'Personne'}` }
                 )
