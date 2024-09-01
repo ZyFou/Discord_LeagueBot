@@ -11,7 +11,7 @@ module.exports = {
     async execute(message, args) {
         const embed = new EmbedBuilder()
             .setColor('#A02D39')
-            .setTitle(`Qui est chaud pour dbd ${args.join(' ')} ? `);
+            .setTitle(`Qui est chaud pour DBD ${args.join(' ')} ? `);
 
         const timestamp = new Date();
         const formattedDate = timestamp.toLocaleDateString();
@@ -45,26 +45,25 @@ module.exports = {
         const collector = sentMessage.createMessageComponentCollector({ filter, componentType: ComponentType.Button, time: 43200000 });
 
         collector.on('collect', async i => {
-            const userTag = i.user.tag;
+            const member = i.guild.members.cache.get(i.user.id);
+            const userName = member ? member.displayName : i.user.username;
 
-            // Remove the user from all lists
-            present = present.filter(tag => tag !== userTag);
-            later = later.filter(tag => tag !== userTag);
-            missing = missing.filter(tag => tag !== userTag);
+            present = present.filter(tag => tag !== userName);
+            later = later.filter(tag => tag !== userName);
+            missing = missing.filter(tag => tag !== userName);
 
-            // Add the user to the selected list
             if (i.customId === 'present') {
-                present.push(userTag);
+                present.push(userName);
             } else if (i.customId === 'later') {
-                later.push(userTag);
+                later.push(userName);
             } else if (i.customId === 'missing') {
-                missing.push(userTag);
+                missing.push(userName);
             }
 
             // Update the embed with counts
             const updatedEmbed = new EmbedBuilder()
                 .setColor('#A02D39')
-                .setTitle('Qui est chaud pour dbd ?')
+                .setTitle(`Qui est chaud pour DBD ${args.join(' ')} ? `)
                 .addFields(
                     { name: `Présent : ${present.length || '0'}`, value: `${present.join(" ") || 'Personne'}` },
                     { name: `Plus tard : ${later.length || '0'}`, value: `${later.join(" ") || 'Personne'}` },

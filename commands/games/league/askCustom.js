@@ -11,7 +11,7 @@ module.exports = {
     async execute(message, args) {
         const embed = new EmbedBuilder()
             .setColor('#ad9563')
-            .setTitle(`Qui est chaud pour custom ${args.join(' ')} ? `);
+            .setTitle(`Qui est chaud pour custom LOL ${args.join(' ')} ? `);
 
         const timestamp = new Date();
         const formattedDate = timestamp.toLocaleDateString();
@@ -65,7 +65,7 @@ module.exports = {
             // Update the embed with counts
             const updatedEmbed = new EmbedBuilder()
                 .setColor('#ad9563')
-                .setTitle('Qui est chaud pour custom ?')
+                .setTitle(`Qui est chaud pour custom LOL ${args.join(' ')} ? `)
                 .addFields(
                     { name: `Présent : ${present.length || '0'}`, value: `${present.join(" ") || 'Personne'}` },
                     { name: `Plus tard : ${later.length || '0'}`, value: `${later.join(" ") || 'Personne'}` },
