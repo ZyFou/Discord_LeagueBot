@@ -34,8 +34,8 @@ module.exports = {
         const filePath = path.join(customsFolder, latestCustomFile);
 
         const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-        const team1 = data.team1;
-        const team2 = data.team2;
+        const team1 = data.team1_tags;
+        const team2 = data.team2_tags;
 
         const guild = interaction.guild;
 

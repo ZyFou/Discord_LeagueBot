@@ -3,7 +3,11 @@ const fs = require('fs');
 const path = './commands/games/league/customs/';
 
 let team1 = [];
+let team1_tags = [];
+
 let team2 = [];
+let team2_tags = [];
+
 
 module.exports = {
     name: 'create',
@@ -60,6 +64,8 @@ module.exports = {
                         team2 = team2.filter(member => member !== userName);
                     }
                     team1.push(userName);
+                    team1_tags.push(i.user.username);
+
                 }
             } else if (i.customId === 'team2') {
                 if (team2.includes(userName)) {
@@ -69,6 +75,8 @@ module.exports = {
                         team1 = team1.filter(member => member !== userName);
                     }
                     team2.push(userName);
+                    team2_tags.push(i.user.username);
+
                 }
             } else if (i.customId === 'confirm') {
                 const fileId = `${Date.now()}`;
@@ -86,7 +94,9 @@ module.exports = {
 
                 const data = {
                     team1: team1,
+                    team1_tags: team1_tags,
                     team2: team2,
+                    team2_tags: team2_tags,
                     timestamp: timestamp.toISOString()
                 };
 
