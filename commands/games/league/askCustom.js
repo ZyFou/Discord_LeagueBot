@@ -39,7 +39,7 @@ module.exports = {
                     .setStyle(ButtonStyle.Danger)
             );
 
-        const sentMessage = await message.channel.send({ content: '@everyone', embeds: [embed], components: [row] });
+        const sentMessage = await message.channel.send({ content: '<@&1271852637116956742>', embeds: [embed], components: [row] });
 
         const filter = i => ['present', 'later', 'missing'].includes(i.customId);
         const collector = sentMessage.createMessageComponentCollector({ filter, componentType: ComponentType.Button, time: 43200000 });

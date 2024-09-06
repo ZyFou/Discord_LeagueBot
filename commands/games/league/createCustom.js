@@ -44,12 +44,16 @@ module.exports = {
                 new ButtonBuilder()
                     .setCustomId('confirm')
                     .setLabel('Démarrer La Custom')
+                    .setStyle(ButtonStyle.Success),
+                new ButtonBuilder()
+                    .setCustomId('clear')
+                    .setLabel('Vider La Custom')
                     .setStyle(ButtonStyle.Secondary)
             );
 
         const sentMessage = await message.channel.send({ embeds: [embed], components: [row] });
 
-        const filter = i => ['team1', 'team2', 'confirm'].includes(i.customId);
+        const filter = i => ['team1', 'team2', 'confirm', 'clear'].includes(i.customId);
         const collector = sentMessage.createMessageComponentCollector({ filter, componentType: ComponentType.Button, time: 120000 });
 
         collector.on('collect', async i => {
@@ -106,6 +110,12 @@ module.exports = {
                 // Start role selection
                 startRoleSelection(message, fileId);
                 return;
+            } else if (i.customId === 'clear') {
+                // Réinitialiser les équipes
+                team1 = [];
+                team1_tags = [];
+                team2 = [];
+                team2_tags = [];
             }
 
             const updatedEmbed = new EmbedBuilder()
